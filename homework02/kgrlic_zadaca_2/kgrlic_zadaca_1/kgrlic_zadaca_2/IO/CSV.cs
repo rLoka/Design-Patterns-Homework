@@ -2,7 +2,7 @@
 
 namespace kgrlic_zadaca_2.IO
 {
-    static class CSV
+    static class Csv
     {
 
         public static List<Dictionary<string,string>> Parse(string csvFilePath)
@@ -17,9 +17,10 @@ namespace kgrlic_zadaca_2.IO
             {
                 Dictionary<string, string> rowDictionary = new Dictionary<string, string>();
                 string[] lineSplit = csvLines[i].Split(';');
-                if (headerList.Count == lineSplit.Length)
+
+                if (headerList.Count <= lineSplit.Length)
                 {
-                    for (int j = 0; j < lineSplit.Length; j++)
+                    for (int j = 0; j < headerList.Count; j++)
                     {
                         rowDictionary.Add(headerList[j], lineSplit[j].Trim());
                     }

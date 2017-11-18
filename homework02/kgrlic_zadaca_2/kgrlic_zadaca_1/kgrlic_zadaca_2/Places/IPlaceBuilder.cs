@@ -7,6 +7,7 @@ namespace kgrlic_zadaca_2.Places
     {
         Place Build();
 
+        IPlaceBuilder SetUniqueIdentifier(int uniqueIdentifier);
         IPlaceBuilder SetName(string name);
         IPlaceBuilder SetType(int? type);
         IPlaceBuilder SetNumberOfSensors(int? numberOfSensors);

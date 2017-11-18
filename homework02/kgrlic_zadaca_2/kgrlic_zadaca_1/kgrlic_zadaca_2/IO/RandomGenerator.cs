@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace kgrlic_zadaca_2.IO
 {
-    class RandomGenerator
+    internal class RandomGenerator
     {
         private static volatile RandomGenerator _instance;
 
@@ -13,7 +13,7 @@ namespace kgrlic_zadaca_2.IO
         {
             if (_instance == null)
             {
-                _instance = new RandomGenerator {_random = new Random(generatorSeed ?? 0)};
+                _instance = new RandomGenerator {_random = new Random(generatorSeed ?? 0 + DateTime.Now.Millisecond) };
             }
 
             return _instance;
@@ -23,6 +23,7 @@ namespace kgrlic_zadaca_2.IO
 
         public int GetRandomInteger(int min, int max, int[] favourables = null, double probability = 0.0)
         {
+
             if (favourables != null)
             {
                 if (_random.NextDouble() < probability)

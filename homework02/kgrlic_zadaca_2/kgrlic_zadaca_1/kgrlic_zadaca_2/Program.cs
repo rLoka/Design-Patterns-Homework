@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
-using kgrlic_zadaca_2.Algorithms;
 using kgrlic_zadaca_2.Configurations;
 using kgrlic_zadaca_2.Devices;
 using kgrlic_zadaca_2.IO;
 using kgrlic_zadaca_2.Places;
+using kgrlic_zadaca_2.Places.Algorithms;
+using kgrlic_zadaca_2.Places.Iterator;
 
 namespace kgrlic_zadaca_2
 {
@@ -13,9 +14,13 @@ namespace kgrlic_zadaca_2
     {
         static void Main(string[] args)
         {
+            Output output = Output.GetInstance();
+            output.WelcomeUser();
+
             if (args.Length != 8)
             {
-                Console.WriteLine("Nedovoljan  broj argumenata!");
+                output.WriteLine("Nedovoljan broj argumenata!", true);
+                output.NotifyEnd();
                 return;
             }
 
@@ -25,14 +30,29 @@ namespace kgrlic_zadaca_2
 
             if (!configuration.IsConfigurationValid())
             {
-                Console.WriteLine("Pogrešni argumenti!");
+                Console.WriteLine("Argumenti nisu valjani! Provjerite argumente!");
+                output.NotifyEnd();
                 return;
             }
 
-            Output output = program.GetOutput(configuration);
+            program.SetOutputPath(configuration);
+            program.InitializeRandomGenerator(configuration);
 
             ThingsOfFoi thingsOfFoi = program.LoadDevices(configuration);
-            FOI foi = program.LoadPlaces(configuration, thingsOfFoi);
+
+            if (thingsOfFoi == null)
+            {
+                output.NotifyEnd();
+                return;
+            }
+
+            Foi foi = program.LoadPlaces(configuration, thingsOfFoi);
+
+            if (foi == null)
+            {
+                output.NotifyEnd();
+                return;
+            }
 
             program.InitializeSystem(foi);
             program.CheckDevices(configuration, foi);
@@ -47,28 +67,29 @@ namespace kgrlic_zadaca_2
             return configuration;
         }
 
-        private Output GetOutput(Configuration configuration)
+        private void SetOutputPath(Configuration configuration)
         {
-            return Output.GetInstance(configuration.OutputFilePath);
+             Output.GetInstance().SetOutputPath(configuration.OutputFilePath);
         }
 
-        private RandomGenerator GetRandomGenerator(Configuration configuration)
+        private void InitializeRandomGenerator(Configuration configuration)
         {
-            return RandomGenerator.GetInstance(configuration.GeneratorSeed);
+            new RandomGeneratorFacade(configuration.GeneratorSeed ?? 0);
         }
 
         private ThingsOfFoi LoadDevices(Configuration configuration)
         {
             ThingsOfFoi thingsOfFoi = new ThingsOfFoi();
+            Output output = Output.GetInstance();
 
-            List<Dictionary<string, string>> sensorsList = CSV.Parse(configuration.SensorsFilePath);
-            List<Dictionary<string, string>> actuatorsList = CSV.Parse(configuration.ActuatorsFilePath);
+            List<Dictionary<string, string>> sensorsList = Csv.Parse(configuration.SensorsFilePath);
+            List<Dictionary<string, string>> actuatorsList = Csv.Parse(configuration.ActuatorsFilePath);
+
             DeviceCreator deviceCreator = new DeviceCreator();
-            Output output = GetOutput(configuration);
 
             foreach (var sensor in sensorsList)
             {
-                Device device = deviceCreator.CreateDevice(sensor, DeviceCreator.DeviceType.Sensor);
+                Device device = deviceCreator.CreateDevice(sensor, DeviceType.Sensor, thingsOfFoi);
                 if (device.IsDeviceValid())
                 {
                     thingsOfFoi.AddSensor(device);
@@ -80,9 +101,15 @@ namespace kgrlic_zadaca_2
                 
             }
 
+            if (sensorsList.Count == 0 || thingsOfFoi.Sensors.Count == 0)
+            {
+                output.WriteLine("Nije učitan nijedan senzor. Program ne može nastaviti!");
+                return null;
+            }
+
             foreach (var actuator in actuatorsList)
             {
-                Device device = deviceCreator.CreateDevice(actuator, DeviceCreator.DeviceType.Actuator);
+                Device device = deviceCreator.CreateDevice(actuator, DeviceType.Actuator, thingsOfFoi);
                 if (device.IsDeviceValid())
                 {
                     thingsOfFoi.AddActuator(device);
@@ -93,22 +120,28 @@ namespace kgrlic_zadaca_2
                 }
             }
 
+            if (actuatorsList.Count == 0 || thingsOfFoi.Actuators.Count == 0)
+            {
+                output.WriteLine("Nije učitan nijedan aktuator. Program ne može nastaviti!");
+                return null;
+            }
+
             return thingsOfFoi;
         }
 
-        private FOI LoadPlaces(Configuration configuration, ThingsOfFoi thingsOfFoi)
+        private Foi LoadPlaces(Configuration configuration, ThingsOfFoi thingsOfFoi)
         {
-            FOI foi = new FOI();
-            List<Dictionary<string, string>> placeList = CSV.Parse(configuration.PlaceFilePath);
+            Output output = Output.GetInstance();
+            Foi foi = new Foi();
+            List<Dictionary<string, string>> placeList = Csv.Parse(configuration.PlaceFilePath);
 
             IPlaceBuilder placeBuilder = new PlaceBuilderImpl();
             PlaceBuildDirector placeBuildDirector = new PlaceBuildDirector(placeBuilder);
 
-            Output output = Output.GetInstance();
-
             foreach (var placeParams in placeList)
             {
-                Place newPlace = placeBuildDirector.Construct(placeParams, thingsOfFoi);
+                Place newPlace = placeBuildDirector.Construct(placeParams, thingsOfFoi, foi);
+
                 if (newPlace == null)
                 {
                     output.WriteLine("Mjesto '" + placeParams["naziv"] + "' već postoji. Preskačem ...");
@@ -117,7 +150,7 @@ namespace kgrlic_zadaca_2
                 {
                     if (newPlace.IsPlaceValid())
                     {
-                        foi.Places.Add(newPlace);
+                        foi.Places[foi.Places.Count] = newPlace;
                     }
                     else
                     {
@@ -126,13 +159,26 @@ namespace kgrlic_zadaca_2
                     
                 }
             }
-            
+
+            if (placeList.Count == 0 || foi.Places.Count == 0)
+            {
+                output.WriteLine("Nije učitano nijedno mjesto. Program ne može nastaviti!");
+                return null;
+            }
+
             return foi;
         }
 
-        private void InitializeSystem(FOI foi)
+        private void InitializeSystem(Foi foi)
         {
-            foreach (var place in foi.Places)
+            IIterator placeIterator = foi.Places.CreateIterator(IteratorType.AscendingValue);
+
+            for 
+            (
+                Place place = placeIterator.First();
+                !placeIterator.IsDone();
+                place = placeIterator.Next()
+            )
             {
                 IEnumerable<Device> devicesOfPlace = place.Devices;
 
@@ -146,10 +192,11 @@ namespace kgrlic_zadaca_2
             }
         }
 
-        private void CheckDevices(Configuration configuration, FOI foi)
+        private void CheckDevices(Configuration configuration, Foi foi)
         {
-            AlgorithmFactory algorithmFactory = AlgorithmFactory.GetFactory(configuration.Algorithm);
-            Algorithm algorithm = algorithmFactory.CreateAlgorithm(foi);
+            Output output = Output.GetInstance();
+            AlgorithmCreator algorithmCreator = new AlgorithmCreator();
+            Algorithm algorithm = algorithmCreator.CreateAlgorithm(configuration.Algorithm, foi);
 
             new Thread(() =>
             {
@@ -162,20 +209,25 @@ namespace kgrlic_zadaca_2
                 
                 ShowStatistics(foi);
 
-                Console.WriteLine("Program je završio. Pritisnite tipku za izlaz.");
-                Console.ReadKey();
+                output.NotifyEnd();
 
             }).Start();
         }
 
-        private void ShowStatistics(FOI foi)
+        private void ShowStatistics(Foi foi)
         {
             Output output = Output.GetInstance();
 
-            foreach (var place in foi.Places)
+            IIterator placeIterator = foi.Places.CreateIterator(IteratorType.Sequential);
+
+            for (
+                Place place = (Place)placeIterator.First();
+                !placeIterator.IsDone();
+                place = (Place)placeIterator.Next()
+                )
             {
                 output.WriteLine(place.ToString());
-                output.WriteLine("\r\n>>>>>>>>>>>>>>> > UREĐAJI < <<<<<<<<<<<<<<<<<\r\n");
+                output.WriteLine(">>>>>>>>>>>>>>> > UREĐAJI < <<<<<<<<<<<<<<<<<\r\n");
 
                 foreach (var device in place.Devices)
                 {

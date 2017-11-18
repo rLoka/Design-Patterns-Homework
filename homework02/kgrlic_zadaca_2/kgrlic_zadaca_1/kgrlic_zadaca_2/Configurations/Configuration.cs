@@ -24,7 +24,7 @@ namespace kgrlic_zadaca_2.Configurations
                 || !File.Exists(ActuatorsFilePath) 
                 || !File.Exists(PlaceFilePath)
                 || !File.Exists(SensorsFilePath)
-                || !(new string[] { "AlphabeticAlgorithm", "NumericAlgorithm", "RandomAlgorithm" }).Contains(Algorithm))
+                || !(new string[] { "AscendingIdentifierAlgorithm", "DescendingIdentifierAlgorithm", "RandomAlgorithm" }).Contains(Algorithm))
             {
                 return false;
             }

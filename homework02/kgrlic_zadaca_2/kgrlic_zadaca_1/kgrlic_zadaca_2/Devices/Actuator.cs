@@ -5,22 +5,28 @@ namespace kgrlic_zadaca_2.Devices
 {    
     class Actuator : Device
     {
-        public DeviceCreator.DeviceType DeviceType = DeviceCreator.DeviceType.Actuator;
-
         private bool _executionDirection = true;
 
-        public Actuator(Dictionary<string, string> deviceParams) : base(deviceParams) { }
+        public Actuator(Dictionary<string, string> deviceParams, ThingsOfFoi thingsOfFoi) : base(deviceParams, thingsOfFoi)
+        {
+            DeviceType = DeviceType.Actuator;
+
+            RandomGeneratorFacade randomGeneratorFacade = new RandomGeneratorFacade();
+
+            do
+            {
+                UniqueIdentifier = randomGeneratorFacade.GiveRandomNumber(1, 1000);
+            } while (DoesUniqueIdentifierExists(UniqueIdentifier, thingsOfFoi.Actuators));
+        }
 
         public override Device Clone()
         {
-             return new Actuator(DeviceParams);
+             return new Actuator(DeviceParams, ThingsOfFoi);
         }
 
         public void ExecuteAction()
         {
             Output output = Output.GetInstance();
-            RandomGenerator randomGenerator = RandomGenerator.GetInstance();
-
             output.WriteLine("Pokretanje motora >>> ...");
             Move();
         }
@@ -33,28 +39,28 @@ namespace kgrlic_zadaca_2.Devices
             {
                 if (_value == 0)
                 {
-                    output.WriteLine("      smjer = ---> ");
+                    output.WriteLine("\tsmjer = ---> ");
                     _value = 1;
                 }
                 else
                 {
-                    output.WriteLine("      smjer = <--- ");
+                    output.WriteLine("\tsmjer = <--- ");
                     _value = 0;
                 }
 
-                output.WriteLine("      nova vrijednost =  " + ReadValue());
+                output.WriteLine("\tnova vrijednost =  " + ReadValue());
             }
             else
             {
-                RandomGenerator randomGenerator = RandomGenerator.GetInstance();
+                RandomGeneratorFacade randomGeneratorFacade = new RandomGeneratorFacade();
 
-                int amount = randomGenerator.GetRandomInteger((int)(Min ?? 0), (int)(Max ?? 1));
+                int amount = randomGeneratorFacade.GiveRandomNumber((int)(Min ?? 0), (int)(Max ?? 1));
 
-                output.WriteLine("      pomicanje za = " + amount);
+                output.WriteLine("\tpomicanje za = " + amount);
 
                 if (_executionDirection)
                 {
-                    output.WriteLine("      smjer = ---> ");
+                    output.WriteLine("\tsmjer = ---> ");
 
                     if (Value + amount > (int)(Max ?? 1))
                     {
@@ -69,7 +75,7 @@ namespace kgrlic_zadaca_2.Devices
                 }
                 else
                 {
-                    output.WriteLine("      smjer = <--- ");
+                    output.WriteLine("\tsmjer = <--- ");
 
                     if (Value - amount < (int)(Min ?? 0))
                     {
@@ -82,7 +88,7 @@ namespace kgrlic_zadaca_2.Devices
                     }
                 }
 
-                output.WriteLine("      nova vrijednost = " + ReadValue());
+                output.WriteLine("\tnova vrijednost = " + ReadValue());
             }
         }
     }

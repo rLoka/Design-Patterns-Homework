@@ -2,22 +2,22 @@
 
 namespace kgrlic_zadaca_2.Devices
 {
+    public enum DeviceType
+    {
+        Actuator,
+        Sensor
+    }
+
     class DeviceCreator
     {
-        public enum DeviceType
-        {
-            Actuator,
-            Sensor
-        }
-
-        public Device CreateDevice(Dictionary<string, string> deviceParams, DeviceType deviceType)
+        public Device CreateDevice(Dictionary<string, string> deviceParams, DeviceType deviceType, ThingsOfFoi thingsOfFoi)
         {
             switch (deviceType)
             {
                 case DeviceType.Actuator:
-                    return new Actuator(deviceParams);
+                    return new Actuator(deviceParams, thingsOfFoi);
                 case DeviceType.Sensor:
-                    return new Sensor(deviceParams);
+                    return new Sensor(deviceParams, thingsOfFoi);
                 default: return null;
             }
         }

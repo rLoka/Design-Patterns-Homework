@@ -11,7 +11,9 @@ namespace kgrlic_zadaca_2.Devices
         public int? Kind;
         public float? Min;
         public float? Max;
+        public int UniqueIdentifier;
         public string Comentary;
+        public DeviceType DeviceType;
 
         protected int? _value;
 
@@ -21,8 +23,8 @@ namespace kgrlic_zadaca_2.Devices
             {
                 if (!_value.HasValue)
                 {
-                    RandomGenerator randomGenerator = RandomGenerator.GetInstance();
-                    _value = (int)randomGenerator.GetRandomFloat(Min ?? 0, Max ?? 1);
+                    RandomGeneratorFacade randomGeneratorFacade = new RandomGeneratorFacade();
+                    _value = (int)randomGeneratorFacade.GiveRandomNumber(Min ?? 0, Max ?? 1);
                 }
 
                 return _value ?? 0;
@@ -45,10 +47,11 @@ namespace kgrlic_zadaca_2.Devices
             }
         }
 
+        protected ThingsOfFoi ThingsOfFoi;
         protected List<int> StatusHistory = new List<int>();
         protected Dictionary<string, string> DeviceParams;
 
-        protected Device(Dictionary<string, string> deviceParams)
+        protected Device(Dictionary<string, string> deviceParams, ThingsOfFoi thingsOfFoi)
         {
             Name = deviceParams["naziv"];
             Type = Converter.StringToInt(deviceParams["tip"]);
@@ -58,6 +61,12 @@ namespace kgrlic_zadaca_2.Devices
             Comentary = deviceParams["komentar"];
 
             DeviceParams = deviceParams;
+            ThingsOfFoi = thingsOfFoi;
+        }
+
+        protected bool DoesUniqueIdentifierExists(int uniqueIdentifier, List<Device> devices)
+        {
+            return devices.Exists(d => d.UniqueIdentifier == uniqueIdentifier);
         }
 
         public bool IsDeviceValid()
@@ -75,7 +84,7 @@ namespace kgrlic_zadaca_2.Devices
         public override string ToString()
         {
             return 
-                "\r\n{ tip: " + Type 
+                "{ tip: " + Type 
                 + ", vrsta: " + Kind 
                 + ", min: " + Min 
                 + ", max: " + Max 
@@ -90,8 +99,8 @@ namespace kgrlic_zadaca_2.Devices
 
         public int GetStatus(double successProbability = 0.5)
         {
-            RandomGenerator randomGenerator = RandomGenerator.GetInstance();
-            StatusHistory.Add(randomGenerator.GetRandomInteger(0, 1, new[] { 1 }, successProbability));
+            RandomGeneratorFacade randomGeneratorFacade = new RandomGeneratorFacade();
+            StatusHistory.Add(randomGeneratorFacade.GiveRandomNumber(0, 1, new[] { 1 }, successProbability));
             return StatusHistory.Last();
         }
 

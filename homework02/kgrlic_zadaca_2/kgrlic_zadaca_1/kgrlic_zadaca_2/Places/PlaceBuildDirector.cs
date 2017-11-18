@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
 using kgrlic_zadaca_2.Devices;
 using kgrlic_zadaca_2.IO;
+using kgrlic_zadaca_2.Places.Iterator;
 
 namespace kgrlic_zadaca_2.Places
 {
     class PlaceBuildDirector
     {
-        private readonly List<string> _builtPlacesList = new List<string>();
-
         private readonly IPlaceBuilder _builder;
 
         public PlaceBuildDirector(IPlaceBuilder builder)
@@ -15,16 +14,24 @@ namespace kgrlic_zadaca_2.Places
             _builder = builder;
         }
 
-        public Place Construct(Dictionary<string, string> placeParams, ThingsOfFoi thingsOfFoi)
+        public Place Construct(Dictionary<string, string> placeParams, ThingsOfFoi thingsOfFoi, Foi foi)
         {
-            if (_builtPlacesList.Contains(placeParams["naziv"]))
+            RandomGeneratorFacade randomGeneratorFacade = new RandomGeneratorFacade();
+
+            if (DoesPlaceNameExists(placeParams["naziv"], foi))
             {
                 return null;
             }
 
-            _builtPlacesList.Add(placeParams["naziv"]);
+            int placeUniqueIdentifier = randomGeneratorFacade.GiveRandomNumber(1, 1000);
+
+            while (DoesIdentifierExists(placeUniqueIdentifier, foi))
+            {
+                placeUniqueIdentifier = randomGeneratorFacade.GiveRandomNumber(1, 1000);
+            }
 
             return _builder
+                .SetUniqueIdentifier(placeUniqueIdentifier)
                 .SetName(placeParams["naziv"])
                 .SetType(Converter.StringToInt(placeParams["tip"]))
                 .SetNumberOfSensors(Converter.StringToInt(placeParams["broj senzora"]))
@@ -34,13 +41,49 @@ namespace kgrlic_zadaca_2.Places
                 .Build();
         }
 
+        private bool DoesPlaceNameExists(string placeName, Foi foi)
+        {
+            IIterator placeIterator = foi.Places.CreateIterator(IteratorType.Sequential);
+            Place place = placeIterator.First();
+
+            while (place != null)
+            {
+                if (place.Name == placeName)
+                {
+                    return true;
+                }
+
+                place = placeIterator.Next();
+            }
+
+            return false;
+        }
+
+        private bool DoesIdentifierExists(int placeIdentifier, Foi foi)
+        {
+            IIterator placeIterator = foi.Places.CreateIterator(IteratorType.Sequential);
+            Place place = placeIterator.First();
+
+            while (place != null)
+            {
+                if (place.UniqueIdentifier == placeIdentifier)
+                {
+                    return true;
+                }
+
+                place = placeIterator.Next();
+            }
+
+            return false;
+        }
+
         private List<Device> GetRandomSensors(int? numberOfSensors, List<Device> availableSensors)
         {
-            RandomGenerator randomGenerator = RandomGenerator.GetInstance();
+            RandomGeneratorFacade randomGeneratorFacade = new RandomGeneratorFacade();
             List<Device> placeSensors = new List<Device>();
             for (int i = 0; i < numberOfSensors; i++)
             {
-                Device randomSensor = availableSensors[randomGenerator.GetRandomInteger(0, availableSensors.Count)];
+                Device randomSensor = availableSensors[randomGeneratorFacade.GiveRandomNumber(0, availableSensors.Count)];
                 placeSensors.Add(randomSensor.Clone());
             }
 
@@ -49,11 +92,11 @@ namespace kgrlic_zadaca_2.Places
 
         private List<Device> GetRandomActuators(int? numberOfActuators, List<Device> availableActuators)
         {
-            RandomGenerator randomGenerator = RandomGenerator.GetInstance();
+            RandomGeneratorFacade randomGeneratorFacade = new RandomGeneratorFacade();
             List<Device> placeActuators = new List<Device>();
             for (int i = 0; i < numberOfActuators; i++)
             {
-                Device randomActuator = availableActuators[randomGenerator.GetRandomInteger(0, availableActuators.Count)];
+                Device randomActuator = availableActuators[randomGeneratorFacade.GiveRandomNumber(0, availableActuators.Count)];
                 placeActuators.Add(randomActuator.Clone());
             }
 

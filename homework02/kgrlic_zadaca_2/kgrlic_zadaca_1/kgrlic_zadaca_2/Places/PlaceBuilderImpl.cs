@@ -14,6 +14,12 @@ namespace kgrlic_zadaca_2.Places
             return builtPlace;
         }
 
+        public IPlaceBuilder SetUniqueIdentifier(int uniqueIdentifier)
+        {
+            _place.UniqueIdentifier = uniqueIdentifier;
+            return this;
+        }
+
         public IPlaceBuilder SetName(string name)
         {
             _place.Name = name;

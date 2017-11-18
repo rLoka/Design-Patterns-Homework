@@ -10,6 +10,7 @@ namespace kgrlic_zadaca_2.Places
         public int? Type;
         public int? NumberOfSensors;
         public int? NumberOfActuators;
+        public int UniqueIdentifier;
 
         public List<Device> Sensors;
         public List<Device> Actuators;
@@ -31,8 +32,8 @@ namespace kgrlic_zadaca_2.Places
         public override string ToString()
         {
             return
-                "\r\n----------------------------- ~ MJESTO ~ --------------------------------\r\n"
-                + "{ naziv: " + Name
+                "----------------------------- ~ MJESTO ~ --------------------------------\r\n"
+                + "\t{ naziv: " + Name
                 + ", tip: " + Type
                 + ", broj senzora: " + NumberOfSensors
                 + ", Broj aktuatora: " + NumberOfActuators
