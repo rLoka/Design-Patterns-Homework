@@ -53,6 +53,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Devices\Actuator.Composite.cs" />
+    <Compile Include="Devices\Device.Component.cs" />
+    <Compile Include="Devices\Sensor.Leaf.cs" />
     <Compile Include="Places\Algorithms\Algorithm.cs" />
     <Compile Include="Places\Algorithms\AscendingIdentifierAlgorithm.cs" />
     <Compile Include="Places\Algorithms\AlgorithmCreator.cs" />

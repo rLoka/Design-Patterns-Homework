@@ -4,8 +4,12 @@ using kgrlic_zadaca_2.IO;
 
 namespace kgrlic_zadaca_2.Devices
 {
-    abstract class Device
+    abstract partial class Device
     {
+        //Abstract methods
+        public abstract Device Clone();
+
+        //Shared stuff
         public string Name;
         public int? Type;
         public int? Kind;
@@ -32,6 +36,7 @@ namespace kgrlic_zadaca_2.Devices
         }
 
         public bool IsBeingUsed;
+
         public bool Malfunctional
         {
             get
@@ -78,8 +83,6 @@ namespace kgrlic_zadaca_2.Devices
 
             return true;
         }
-
-        public abstract Device Clone();
 
         public override string ToString()
         {

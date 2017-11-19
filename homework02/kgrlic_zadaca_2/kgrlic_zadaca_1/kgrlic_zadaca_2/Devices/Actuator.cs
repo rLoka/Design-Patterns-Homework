@@ -3,7 +3,7 @@ using kgrlic_zadaca_2.IO;
 
 namespace kgrlic_zadaca_2.Devices
 {    
-    class Actuator : Device
+    partial class Actuator : Device
     {
         private bool _executionDirection = true;
 

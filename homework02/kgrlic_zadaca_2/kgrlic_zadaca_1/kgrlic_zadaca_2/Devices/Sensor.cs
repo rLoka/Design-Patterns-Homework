@@ -3,7 +3,7 @@ using kgrlic_zadaca_2.IO;
 
 namespace kgrlic_zadaca_2.Devices
 {
-    class Sensor : Device
+    partial class Sensor : Device
     {
         public Sensor(Dictionary<string, string> deviceParams, ThingsOfFoi thingsOfFoi) : base(deviceParams, thingsOfFoi)
         {
