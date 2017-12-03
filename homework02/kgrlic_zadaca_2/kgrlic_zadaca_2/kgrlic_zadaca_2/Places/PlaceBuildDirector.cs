@@ -53,6 +53,7 @@ namespace kgrlic_zadaca_2.Places
             {
                 if (place.Name == placeName)
                 {
+                    Output.GetInstance().WriteLine("Mjesto: '" + placeName + "' već postoji!", true);
                     return true;
                 }
 

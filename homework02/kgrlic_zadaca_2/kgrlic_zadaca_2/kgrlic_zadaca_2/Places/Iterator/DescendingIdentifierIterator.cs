@@ -5,7 +5,6 @@ namespace kgrlic_zadaca_2.Places.Iterator
     class DescendingIdentifierIterator : IIterator
     {
         private readonly Aggregate _aggregate;
-        private bool _maximumValueReached = false;
         private int _currentIndex;
 
         private int _nextIndex
