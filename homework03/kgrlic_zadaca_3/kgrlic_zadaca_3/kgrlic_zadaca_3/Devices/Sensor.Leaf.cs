@@ -13,20 +13,9 @@ namespace kgrlic_zadaca_3.Devices
             output.WriteLine("Nije moguće dodati uređaj jer je ovo senzor.", true);
         }
 
-        public override void RemoveChild(Device device)
-        {
-            Output output = Output.GetInstance();
-            output.WriteLine("Ovaj uređaj nema poduređaja.", true);
-        }
-
         public override void AddParent(Device device)
         {
             _parents.Add(device);
-        }
-
-        public override void RemoveParent(Device device)
-        {
-            _parents.Remove(device);
         }
 
         public override List<Device> GetChildren()

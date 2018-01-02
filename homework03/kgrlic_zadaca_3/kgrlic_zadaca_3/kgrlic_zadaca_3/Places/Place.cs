@@ -3,17 +3,15 @@ using kgrlic_zadaca_3.Devices;
 
 namespace kgrlic_zadaca_3.Places
 {
-    partial class Place
+    class Place
     {
         public string Name;
         public int? Type;
         public int? NumberOfSensors;
         public int? NumberOfActuators;
-        public int UniqueIdentifier;
+        public int? UniqueIdentifier;
 
-        public List<Device> Devices;
-
-        public Place() { }
+        public List<Device> Devices = new List<Device>();
 
         public bool IsPlaceValid()
         {
@@ -29,7 +27,8 @@ namespace kgrlic_zadaca_3.Places
         {
             return
                 "----------------------------- ~ MJESTO ~ --------------------------------\r\n"
-                + "\t{ naziv: " + Name
+                + "\t{ ID: " + UniqueIdentifier
+                + ", naziv: " + Name
                 + ", tip: " + Type
                 + ", broj senzora: " + NumberOfSensors
                 + ", Broj aktuatora: " + NumberOfActuators

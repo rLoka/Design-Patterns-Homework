@@ -4,15 +4,15 @@
     {
         Configuration Build();
 
-        IConfigurationBuilder SetSetGeneratorSeed(int? generatorSeed);
+        IConfigurationBuilder SetNumberOfRows(int? numberOfRows);
+        IConfigurationBuilder SetNumberOfColumns(int? numberOfColumns);
+        IConfigurationBuilder SetNumberOfInputRows(int? numberOfInputRows);
+        IConfigurationBuilder SetAverageDeviceValidity(int? averageDeviceValidity);
+        IConfigurationBuilder SetGeneratorSeed(int? generatorSeed);
         IConfigurationBuilder SetThreadCycleDuration(int? threadCycleDuration);
-        IConfigurationBuilder SetNumberOfThreadCycles(int? numberOfThreadCycles);
-        IConfigurationBuilder SetNumberOfLines(int? numberOfLines);
-
         IConfigurationBuilder SetPlaceFilePath(string placeFilePath);
         IConfigurationBuilder SetSensorsFilePath(string sensorsFilePath);
         IConfigurationBuilder SetActuatorsFilePath(string actuatorsFilePath);
-        IConfigurationBuilder SetOutputFilePath(string outputFilePath);
-        IConfigurationBuilder SetAlgorithm(string algorithm);
+        IConfigurationBuilder SetScheduleFilePath(string scheduleFilePath);
     }
 }

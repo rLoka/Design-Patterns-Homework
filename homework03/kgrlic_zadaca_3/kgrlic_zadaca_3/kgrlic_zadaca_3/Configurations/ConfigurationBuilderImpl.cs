@@ -8,11 +8,12 @@ namespace kgrlic_zadaca_3.Configurations
     {
         private readonly Configuration _configuration;
 
-        public bool IsGeneratorSeedSet = false;
-        public bool IsThreadCycleDurationSet = false;
-        public bool IsNumberOfThreadCyclesSet = false;
-        public bool IsOutputFilePathSet = false;
-        public bool IsNumberOfLinesSet = false;
+        private bool _isNumberOfRows;
+        private bool _isNumberOfColumns;
+        private bool _isNumberOfInputRows;
+        private bool _isAverageDeviceValidity;
+        private bool _isGeneratorSeedSet;
+        private bool _isThreadCycleDurationSet;
 
         public ConfigurationBuilderImpl()
         {
@@ -23,61 +24,85 @@ namespace kgrlic_zadaca_3.Configurations
         {
             RandomGeneratorFacade randomGeneratorFacade = new RandomGeneratorFacade();
 
-            if (!IsGeneratorSeedSet)
+            if (!_isNumberOfRows)
             {
-                SetSetGeneratorSeed(randomGeneratorFacade.GiveRandomNumber(100, 65535));
+                SetNumberOfRows(24);
             }
-            if (!IsThreadCycleDurationSet)
+            if (!_isNumberOfColumns)
+            {
+                SetNumberOfColumns(80);
+            }
+            if (!_isNumberOfInputRows)
+            {
+                SetNumberOfInputRows(2);
+            }
+            if (!_isAverageDeviceValidity)
+            {
+                SetAverageDeviceValidity(50);
+            }
+            if (!_isGeneratorSeedSet)
+            {
+                SetGeneratorSeed((int)(DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond));
+            }
+            if (!_isThreadCycleDurationSet)
             {
                 SetThreadCycleDuration(randomGeneratorFacade.GiveRandomNumber(1, 17));
-            }
-            if (!IsNumberOfThreadCyclesSet)
-            {
-                SetNumberOfThreadCycles(randomGeneratorFacade.GiveRandomNumber(1, 23));
-            }
-            if (!IsOutputFilePathSet)
-            {
-                SetOutputFilePath("kgrlic_" + DateTime.Now.ToString("yyyymmdd_HHmmss") + ".txt");
-            }
-            if (!IsNumberOfLinesSet)
-            {
-                SetNumberOfLines(randomGeneratorFacade.GiveRandomNumber(100, 999));
             }
 
             return _configuration;
         }
 
-        public IConfigurationBuilder SetSetGeneratorSeed(int? generatorSeed)
+        public IConfigurationBuilder SetNumberOfRows(int? numberOfRows)
         {
-            IsGeneratorSeedSet = true;
+            _isNumberOfRows = true;
+            _configuration.NumberOfRows = numberOfRows;
+            return this;
+        }
+
+        public IConfigurationBuilder SetNumberOfColumns(int? numberOfColumns)
+        {
+            _isNumberOfColumns = true;
+            _configuration.NumberOfColumns = numberOfColumns;
+            return this;
+        }
+
+        public IConfigurationBuilder SetNumberOfInputRows(int? numberOfInputRows)
+        {
+            _isNumberOfInputRows = true;
+            _configuration.NumberOfInputRows = numberOfInputRows;
+            return this;
+        }
+
+        public IConfigurationBuilder SetAverageDeviceValidity(int? averageDeviceValidity)
+        {
+            _isAverageDeviceValidity = true;
+            _configuration.AverageDeviceValidity = averageDeviceValidity;
+            return this;
+        }
+
+        public IConfigurationBuilder SetGeneratorSeed(int? generatorSeed)
+        {
+            _isGeneratorSeedSet = true;
             _configuration.GeneratorSeed = generatorSeed;
             return this;
         }
 
         public IConfigurationBuilder SetThreadCycleDuration(int? threadCycleDuration)
         {
-            IsThreadCycleDurationSet = true;
+            _isThreadCycleDurationSet = true;
             _configuration.ThreadCycleDuration = threadCycleDuration;
-            return this;
-        }
-
-        public IConfigurationBuilder SetNumberOfThreadCycles(int? numberOfThreadCycles)
-        {
-            IsNumberOfThreadCyclesSet = true;
-            _configuration.NumberOfThreadCycles = numberOfThreadCycles;
-            return this;
-        }
-
-        public IConfigurationBuilder SetNumberOfLines(int? numberOfLines)
-        {
-            IsNumberOfLinesSet = true;
-            _configuration.NumberOfLines = numberOfLines;
             return this;
         }
 
         public IConfigurationBuilder SetPlaceFilePath(string placeFilePath)
         {
             _configuration.PlaceFilePath = placeFilePath;
+            return this;
+        }
+
+        public IConfigurationBuilder SetScheduleFilePath(string scheduleFilePath)
+        {
+            _configuration.ScheduleFilePath = scheduleFilePath;
             return this;
         }
 
@@ -90,19 +115,6 @@ namespace kgrlic_zadaca_3.Configurations
         public IConfigurationBuilder SetActuatorsFilePath(string actuatorsFilePath)
         {
             _configuration.ActuatorsFilePath = actuatorsFilePath;
-            return this;
-        }
-
-        public IConfigurationBuilder SetOutputFilePath(string outputFilePath)
-        {
-            IsOutputFilePathSet = true;
-            _configuration.OutputFilePath = outputFilePath;
-            return this;
-        }
-
-        public IConfigurationBuilder SetAlgorithm(string algorithm)
-        {
-            _configuration.Algorithm = algorithm;
             return this;
         }
     }

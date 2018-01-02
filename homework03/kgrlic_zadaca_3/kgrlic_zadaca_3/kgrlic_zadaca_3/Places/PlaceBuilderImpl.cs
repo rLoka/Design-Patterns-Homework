@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using kgrlic_zadaca_3.Devices;
-
-namespace kgrlic_zadaca_3.Places
+﻿namespace kgrlic_zadaca_3.Places
 {
     class PlaceBuilderImpl : IPlaceBuilder
     {
@@ -14,7 +11,7 @@ namespace kgrlic_zadaca_3.Places
             return builtPlace;
         }
 
-        public IPlaceBuilder SetUniqueIdentifier(int uniqueIdentifier)
+        public IPlaceBuilder SetUniqueIdentifier(int? uniqueIdentifier)
         {
             _place.UniqueIdentifier = uniqueIdentifier;
             return this;
@@ -41,12 +38,6 @@ namespace kgrlic_zadaca_3.Places
         public IPlaceBuilder SetNumberOfActuators(int? numberOfActuators)
         {
             _place.NumberOfActuators = numberOfActuators;
-            return this;
-        }
-
-        public IPlaceBuilder SetDevices(List<Device> devices)
-        {
-            _place.Devices = devices;
             return this;
         }
     }

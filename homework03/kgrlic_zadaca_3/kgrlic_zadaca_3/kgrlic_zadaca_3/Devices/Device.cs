@@ -15,7 +15,8 @@ namespace kgrlic_zadaca_3.Devices
         public int? Kind;
         public float? Min;
         public float? Max;
-        public int UniqueIdentifier;
+        public int? ModelIdentifier;
+        public int? UniqueIdentifier;
         public string Comentary;
         public DeviceType DeviceType;
 
@@ -36,7 +37,9 @@ namespace kgrlic_zadaca_3.Devices
         }
 
         public bool IsBeingUsed;
+
         public List<int> StatusHistory = new List<int>();
+
         public bool Malfunctional
         {
             get
@@ -57,6 +60,7 @@ namespace kgrlic_zadaca_3.Devices
 
         protected Device(Dictionary<string, string> deviceParams, ThingsOfFoi thingsOfFoi)
         {
+            ModelIdentifier = Converter.StringToInt(deviceParams["id"]);
             Name = deviceParams["naziv"];
             Type = Converter.StringToInt(deviceParams["tip"]);
             Kind = Converter.StringToInt(deviceParams["vrsta"]);
@@ -68,25 +72,16 @@ namespace kgrlic_zadaca_3.Devices
             ThingsOfFoi = thingsOfFoi;
         }
 
-        protected bool DoesUniqueIdentifierExists(int uniqueIdentifier, List<Device> devices)
-        {
-            return devices.Exists(d => d.UniqueIdentifier == uniqueIdentifier);
-        }
-
         public bool IsDeviceValid()
         {
-            if (Name.Length < 1 || Type == null || Kind == null || Min == null || Max == null)
-            {
-                return false;
-            }
-
-            return true;
+            return Name.Length >= 1 && Type != null && Kind != null && Min != null && Max != null;
         }
 
         public override string ToString()
         {
-            return 
-                "{ tip: " + Type 
+            return
+                "{ ID: " + UniqueIdentifier
+                + ", tip: " + Type 
                 + ", vrsta: " + Kind 
                 + ", min: " + Min 
                 + ", max: " + Max 
@@ -99,10 +94,10 @@ namespace kgrlic_zadaca_3.Devices
                 + " }";
         }
 
-        public int GetStatus(double successProbability = 0.5)
+        public int GetStatus(double? averageDeviceValidity = 0.5)
         {
             RandomGeneratorFacade randomGeneratorFacade = new RandomGeneratorFacade();
-            StatusHistory.Add(randomGeneratorFacade.GiveRandomNumber(0, 1, new[] { 1 }, successProbability));
+            StatusHistory.Add(randomGeneratorFacade.GiveRandomNumber(0, 1, new[] { 1 }, averageDeviceValidity));
             return StatusHistory.Last();
         }
 
@@ -123,11 +118,11 @@ namespace kgrlic_zadaca_3.Devices
             return "";
         }
 
-        public int Initialize()
+        public int Initialize(double? averageDeviceValidity)
         {
             StatusHistory = new List<int>();
             IsBeingUsed = true;
-            return GetStatus(0.9);
+            return GetStatus(averageDeviceValidity);
         }
     }
 }

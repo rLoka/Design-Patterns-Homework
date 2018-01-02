@@ -1,14 +1,14 @@
-﻿using kgrlic_zadaca_3.Places.Iterator;
+﻿using System.Collections.Generic;
 
 namespace kgrlic_zadaca_3.Places
 {
     class Foi
     {
-        public Aggregate Places = new PlaceAggregate();
+        public List<Place> Places = new List<Place>();
 
         public void AddPlace(Place place)
         {
-            Places[Places.Count] = place;
+            Places.Add(place);
         }
     }
 }

@@ -6,7 +6,6 @@ namespace kgrlic_zadaca_3.Configurations
     abstract class ArgumentHandler
     {
         protected ArgumentHandler _successor;
-        protected Output _output = Output.GetInstance();
 
         public void SetSuccessor(ArgumentHandler successor)
         {
@@ -16,61 +15,111 @@ namespace kgrlic_zadaca_3.Configurations
         public abstract void HandleArgument(Tuple<string, string> argument, IConfigurationBuilder builder);
     }
 
+    class DefaultHandler : ArgumentHandler
+    {
+        public DefaultHandler()
+        {
+            SetSuccessor(new NumberOfRowsHandler());
+        }
+
+        public override void HandleArgument(Tuple<string, string> argument, IConfigurationBuilder builder)
+        {
+            _successor.HandleArgument(argument, builder);
+        }
+    }
+
+    class NumberOfRowsHandler : ArgumentHandler
+    {
+        public NumberOfRowsHandler()
+        {
+            SetSuccessor(new NumberOfColumnsHandler());
+        }
+
+        public override void HandleArgument(Tuple<string, string> argument, IConfigurationBuilder builder)
+        {
+            if (argument.Item1 == "-br")
+            {
+                builder.SetNumberOfRows(Converter.StringToInt(argument.Item2));
+            }
+            else
+            {
+                _successor.HandleArgument(argument, builder);
+            }
+        }
+    }
+
+    class NumberOfColumnsHandler : ArgumentHandler
+    {
+        public NumberOfColumnsHandler()
+        {
+            SetSuccessor(new NumberOfInputRowsHandler());
+        }
+
+        public override void HandleArgument(Tuple<string, string> argument, IConfigurationBuilder builder)
+        {
+            if (argument.Item1 == "-bs")
+            {
+                builder.SetNumberOfColumns(Converter.StringToInt(argument.Item2));
+            }
+            else
+            {
+                _successor.HandleArgument(argument, builder);
+            }
+        }
+    }
+
+    class NumberOfInputRowsHandler : ArgumentHandler
+    {
+        public NumberOfInputRowsHandler()
+        {
+            SetSuccessor(new AverageDeviceValidityHandler());
+        }
+
+        public override void HandleArgument(Tuple<string, string> argument, IConfigurationBuilder builder)
+        {
+            if (argument.Item1 == "-brk")
+            {
+                builder.SetNumberOfInputRows(Converter.StringToInt(argument.Item2));
+            }
+            else
+            {
+                _successor.HandleArgument(argument, builder);
+            }
+        }
+    }
+
+    class AverageDeviceValidityHandler : ArgumentHandler
+    {
+        public AverageDeviceValidityHandler()
+        {
+            SetSuccessor(new GeneratorSeedHandler());
+        }
+
+        public override void HandleArgument(Tuple<string, string> argument, IConfigurationBuilder builder)
+        {
+            if (argument.Item1 == "-pi")
+            {
+                builder.SetAverageDeviceValidity(Converter.StringToInt(argument.Item2));
+            }
+            else
+            {
+                _successor.HandleArgument(argument, builder);
+            }
+        }
+    }
+
     class GeneratorSeedHandler : ArgumentHandler
     {
         public GeneratorSeedHandler()
         {
-            ArgumentHandler successorHandler = new ThreadCycleDurationHandler();
-            SetSuccessor(successorHandler);
+            SetSuccessor(new PlaceFilePathHandler());
         }
 
         public override void HandleArgument(Tuple<string, string> argument, IConfigurationBuilder builder)
         {
             if (argument.Item1 == "-g")
             {
-                builder.SetSetGeneratorSeed(Converter.StringToInt(argument.Item2));
-            }
-            else
-            {
-                _successor.HandleArgument(argument, builder);
-            }
-        }
-    }
-
-    class ThreadCycleDurationHandler : ArgumentHandler
-    {
-        public ThreadCycleDurationHandler()
-        {
-            ArgumentHandler successorHandler = new NumberOfThreadCyclesHandler();
-            SetSuccessor(successorHandler);
-        }
-
-        public override void HandleArgument(Tuple<string, string> argument, IConfigurationBuilder builder)
-        {
-            if (argument.Item1 == "-tcd")
-            {
-                builder.SetThreadCycleDuration(Converter.StringToInt(argument.Item2));
-            }
-            else
-            {
-                _successor.HandleArgument(argument, builder);
-            }
-        }
-    }
-
-    class NumberOfThreadCyclesHandler : ArgumentHandler
-    {
-        public NumberOfThreadCyclesHandler()
-        {
-            ArgumentHandler successorHandler = new PlaceFilePathHandler();
-            SetSuccessor(successorHandler);
-        }
-
-        public override void HandleArgument(Tuple<string, string> argument, IConfigurationBuilder builder)
-        {
-            if (argument.Item1 == "-bcd")
-            {
-                builder.SetNumberOfThreadCycles(Converter.StringToInt(argument.Item2));
+                builder.SetGeneratorSeed(Converter.StringToInt(argument.Item2));
             }
             else
             {
@@ -83,8 +132,7 @@ namespace kgrlic_zadaca_3.Configurations
     {
         public PlaceFilePathHandler()
         {
-            ArgumentHandler successorHandler = new SensorsFilePathHandler();
-            SetSuccessor(successorHandler);
+            SetSuccessor(new SensorsFilePathHandler());
         }
 
         public override void HandleArgument(Tuple<string, string> argument, IConfigurationBuilder builder)
@@ -104,8 +152,7 @@ namespace kgrlic_zadaca_3.Configurations
     {
         public SensorsFilePathHandler()
         {
-            ArgumentHandler successorHandler = new ActuatorsFilePathHandler();
-            SetSuccessor(successorHandler);
+            SetSuccessor(new ActuatorsFilePathHandler());
         }
 
         public override void HandleArgument(Tuple<string, string> argument, IConfigurationBuilder builder)
@@ -125,8 +172,7 @@ namespace kgrlic_zadaca_3.Configurations
     {
         public ActuatorsFilePathHandler()
         {
-            ArgumentHandler successorHandler = new OutputFilePathHandler();
-            SetSuccessor(successorHandler);
+            SetSuccessor(new ScheduleFilePathHandler());
         }
 
         public override void HandleArgument(Tuple<string, string> argument, IConfigurationBuilder builder)
@@ -142,19 +188,18 @@ namespace kgrlic_zadaca_3.Configurations
         }
     }
 
-    class OutputFilePathHandler : ArgumentHandler
+    class ScheduleFilePathHandler : ArgumentHandler
     {
-        public OutputFilePathHandler()
+        public ScheduleFilePathHandler()
         {
-            ArgumentHandler successorHandler = new AlgorithmHandler();
-            SetSuccessor(successorHandler);
+            SetSuccessor(new ThreadCycleDurationHandler());
         }
 
         public override void HandleArgument(Tuple<string, string> argument, IConfigurationBuilder builder)
         {
-            if (argument.Item1 == "-i")
+            if (argument.Item1 == "-r")
             {
-                builder.SetOutputFilePath(argument.Item2);
+                builder.SetScheduleFilePath(argument.Item2);
             }
             else
             {
@@ -163,34 +208,13 @@ namespace kgrlic_zadaca_3.Configurations
         }
     }
 
-    class AlgorithmHandler : ArgumentHandler
-    {
-        public AlgorithmHandler()
-        {
-            ArgumentHandler successorHandler = new NumberOfLinesHandler();
-            SetSuccessor(successorHandler);
-        }
-
-        public override void HandleArgument(Tuple<string, string> argument, IConfigurationBuilder builder)
-        {
-            if (argument.Item1 == "-alg")
-            {
-                builder.SetAlgorithm(argument.Item2);
-            }
-            else
-            {
-                _successor.HandleArgument(argument, builder);
-            }
-        }
-    }
-
-    class NumberOfLinesHandler : ArgumentHandler
+    class ThreadCycleDurationHandler : ArgumentHandler
     {
         public override void HandleArgument(Tuple<string, string> argument, IConfigurationBuilder builder)
         {
-            if (argument.Item1 == "-brl")
+            if (argument.Item1 == "-tcd")
             {
-                builder.SetNumberOfLines(Converter.StringToInt(argument.Item2));
+                builder.SetThreadCycleDuration(Converter.StringToInt(argument.Item2));
             }
         }
     }

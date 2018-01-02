@@ -21,7 +21,7 @@
         }
 
         //public int dajSlucajniBroj(int odBroja, int doBroja, int[] pozeljniBrojevi, double vjerojatnostDobivanjaPozeljnihBrojeva)
-        public int GiveRandomNumber(int fromNumber, int toNumber, int[] desirableNumbers, double probabilityOfGettingDesirableNumbers)
+        public int GiveRandomNumber(int fromNumber, int toNumber, int[] desirableNumbers, double? probabilityOfGettingDesirableNumbers)
         {
             return _randomGenerator.GetRandomInteger(fromNumber, toNumber, desirableNumbers, probabilityOfGettingDesirableNumbers);
         }

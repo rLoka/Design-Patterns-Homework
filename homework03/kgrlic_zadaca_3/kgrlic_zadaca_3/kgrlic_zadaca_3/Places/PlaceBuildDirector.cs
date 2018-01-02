@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using kgrlic_zadaca_3.Devices;
 using kgrlic_zadaca_3.IO;
-using kgrlic_zadaca_3.Places.Iterator;
 
 namespace kgrlic_zadaca_3.Places
 {
@@ -18,81 +19,24 @@ namespace kgrlic_zadaca_3.Places
         {
             RandomGeneratorFacade randomGeneratorFacade = new RandomGeneratorFacade();
 
-            if (DoesPlaceNameExists(placeParams["naziv"], foi))
+            if (DoesPlaceExists(Converter.StringToInt(placeParams["id"]), foi))
             {
+                Console.WriteLine("Mjesto sa identifikatorom: " + placeParams["id"] + "(" + placeParams["naziv"] + ") vec postoji, preskacem!");
                 return null;
             }
 
-            int placeUniqueIdentifier = randomGeneratorFacade.GiveRandomNumber(1, 1000);
-
-            while (DoesIdentifierExists(placeUniqueIdentifier, foi))
-            {
-                placeUniqueIdentifier = randomGeneratorFacade.GiveRandomNumber(1, 1000);
-            }
-
-            List<Device> devices = new List<Device>();
-            devices.AddRange(GetRandomDevices(Converter.StringToInt(placeParams["broj senzora"]), thingsOfFoi.Sensors.FindAll(sen => sen.Type == Converter.StringToInt(placeParams["tip"]) || sen.Type == 2)));
-            devices.AddRange(GetRandomDevices(Converter.StringToInt(placeParams["broj aktuatora"]), thingsOfFoi.Actuators.FindAll(act => act.Type == Converter.StringToInt(placeParams["tip"]) || act.Type == 2)));
-
             return _builder
-                .SetUniqueIdentifier(placeUniqueIdentifier)
+                .SetUniqueIdentifier(Converter.StringToInt(placeParams["id"]))
                 .SetName(placeParams["naziv"])
                 .SetType(Converter.StringToInt(placeParams["tip"]))
                 .SetNumberOfSensors(Converter.StringToInt(placeParams["broj senzora"]))
                 .SetNumberOfActuators(Converter.StringToInt(placeParams["broj aktuatora"]))
-                .SetDevices(devices)
                 .Build();
         }
 
-        private bool DoesPlaceNameExists(string placeName, Foi foi)
+        private bool DoesPlaceExists(int? placeId, Foi foi)
         {
-            IIterator placeIterator = foi.Places.CreateIterator(IteratorType.Sequential);
-            Place place = placeIterator.First();
-
-            while (place != null)
-            {
-                if (place.Name == placeName)
-                {
-                    Output.GetInstance().WriteLine("Mjesto: '" + placeName + "' već postoji!", true);
-                    return true;
-                }
-
-                place = placeIterator.Next();
-            }
-
-            return false;
-        }
-
-        private bool DoesIdentifierExists(int placeIdentifier, Foi foi)
-        {
-            IIterator placeIterator = foi.Places.CreateIterator(IteratorType.Sequential);
-            Place place = placeIterator.First();
-
-            while (place != null)
-            {
-                if (place.UniqueIdentifier == placeIdentifier)
-                {
-                    return true;
-                }
-
-                place = placeIterator.Next();
-            }
-
-            return false;
-        }
-
-        private List<Device> GetRandomDevices(int? numberOfDevices, List<Device> availableDevices)
-        {
-            RandomGeneratorFacade randomGeneratorFacade = new RandomGeneratorFacade();
-            List<Device> placeDevices = new List<Device>();
-
-            for (int i = 0; i < numberOfDevices; i++)
-            {
-                Device randomDevice = availableDevices[randomGeneratorFacade.GiveRandomNumber(0, availableDevices.Count)];
-                placeDevices.Add(randomDevice.Clone());
-            }
-
-            return placeDevices;
+            return foi.Places.Any(p => p.UniqueIdentifier == placeId);
         }
     }
 }

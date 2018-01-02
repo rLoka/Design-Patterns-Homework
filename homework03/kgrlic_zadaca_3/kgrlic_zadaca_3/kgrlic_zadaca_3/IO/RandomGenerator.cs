@@ -21,7 +21,7 @@ namespace kgrlic_zadaca_3.IO
 
         protected RandomGenerator() { }
 
-        public int GetRandomInteger(int min, int max, int[] favourables = null, double probability = 0.0)
+        public int GetRandomInteger(int min, int max, int[] favourables = null, double? probability = 0.0)
         {
 
             if (favourables != null)

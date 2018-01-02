@@ -6,9 +6,7 @@ namespace kgrlic_zadaca_3.Devices
     {
         //Composite methods of Device class
         public abstract void AddChild(Device device);
-        public abstract void RemoveChild(Device device);
         public abstract void AddParent(Device device);
-        public abstract void RemoveParent(Device device);
         public abstract List<Device> GetChildren();
         public abstract List<Device> GetParents();
 

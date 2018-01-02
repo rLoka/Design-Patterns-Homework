@@ -12,21 +12,10 @@ namespace kgrlic_zadaca_3.Devices
             _children.Add(device);
         }
 
-        public override void RemoveChild(Device device)
-        {
-            _children.Remove(device);
-        }
-
         public override void AddParent(Device device)
         {
             Output output = Output.GetInstance();
             output.WriteLine("Nije moguće dodati uređaj jer je ovo aktuator.", true);
-        }
-
-        public override void RemoveParent(Device device)
-        {
-            Output output = Output.GetInstance();
-            output.WriteLine("Nije moguće ukloinit uređaj jer je ovo aktuator.", true);
         }
 
         public override List<Device> GetChildren()

@@ -4,15 +4,15 @@ namespace kgrlic_zadaca_3.Devices
 {
     class ThingsOfFoi
     {
-        public List<Device> Sensors = new List<Device>();
-        public List<Device> Actuators = new List<Device>();
+        public readonly List<Sensor> Sensors = new List<Sensor>();
+        public readonly List<Actuator> Actuators = new List<Actuator>();
 
-        public void AddSensor(Device sensor)
+        public void AddSensor(Sensor sensor)
         {
             Sensors.Add(sensor);
         }
 
-        public void AddActuator(Device actuator)
+        public void AddActuator(Actuator actuator)
         {
             Actuators.Add(actuator);
         }

@@ -45,6 +45,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -54,20 +55,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configurations\ArgumentHandler.cs" />
+    <Compile Include="Controller\Help\HelpController.cs" />
+    <Compile Include="Controller\Index\IndexController.cs" />
     <Compile Include="Devices\Actuator.Composite.cs" />
-    <Compile Include="Devices\Actuator.Element.cs" />
     <Compile Include="Devices\Device.Component.cs" />
-    <Compile Include="Devices\Device.Element.cs" />
-    <Compile Include="Devices\Repair\Visitor.cs" />
-    <Compile Include="Devices\Sensor.Element.cs" />
     <Compile Include="Devices\Sensor.Leaf.cs" />
-    <Compile Include="IO\BufferObserver.cs" />
-    <Compile Include="IO\Output.Subject.cs" />
-    <Compile Include="Places\Algorithms\Algorithm.cs" />
-    <Compile Include="Places\Algorithms\AscendingIdentifierAlgorithm.cs" />
-    <Compile Include="Places\Algorithms\AlgorithmCreator.cs" />
-    <Compile Include="Places\Algorithms\DescendingIdentifierAlgorithm.cs" />
-    <Compile Include="Places\Algorithms\RandomAlgorithm.cs" />
+    <Compile Include="Framework\Controller.cs" />
+    <Compile Include="Framework\Model.cs" />
+    <Compile Include="Framework\Observer.cs" />
+    <Compile Include="Framework\Router.cs" />
+    <Compile Include="Framework\View.cs" />
+    <Compile Include="IO\ArgumentChecker.cs" />
+    <Compile Include="IO\EntityLoader.cs" />
+    <Compile Include="IO\Initializer.cs" />
     <Compile Include="Configurations\Configuration.cs" />
     <Compile Include="Configurations\ConfigurationBuildDirector.cs" />
     <Compile Include="Configurations\ConfigurationBuilderImpl.cs" />
@@ -81,23 +81,20 @@
     <Compile Include="IO\Output.cs" />
     <Compile Include="IO\RandomGenerator.cs" />
     <Compile Include="IO\RandomGeneratorFacade.cs" />
-    <Compile Include="Places\Algorithms\SequentialAlgorithm.cs" />
-    <Compile Include="Places\Iterator\PlaceAggregate.cs" />
-    <Compile Include="Places\Iterator\AscendingIdentifierIterator.cs" />
-    <Compile Include="Places\Iterator\Aggregate.cs" />
-    <Compile Include="Places\Iterator\DescendingIdentifierIterator.cs" />
-    <Compile Include="Places\Iterator\RandomIterator.cs" />
-    <Compile Include="Places\Iterator\SequentialIterator.cs" />
-    <Compile Include="Places\Iterator\IIterator.cs" />
+    <Compile Include="Model\Help\HelpModel.cs" />
+    <Compile Include="Model\Index\IndexModel.cs" />
+    <Compile Include="Places\Algorithm.cs" />
     <Compile Include="Places\Foi.cs" />
     <Compile Include="Places\IPlaceBuilder.cs" />
     <Compile Include="Places\Place.cs" />
     <Compile Include="Devices\Sensor.cs" />
-    <Compile Include="Places\Place.Structure.cs" />
     <Compile Include="Places\PlaceBuildDirector.cs" />
     <Compile Include="Places\PlaceBuilderImpl.cs" />
+    <Compile Include="Places\Schedule.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="View\Help\HelpView.cs" />
+    <Compile Include="View\Index\IndexView.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
